@@ -1,0 +1,2 @@
+"extends": "prettier"
+"parser": "babel-eslint"
