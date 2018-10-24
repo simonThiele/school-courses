@@ -1,4 +1,5 @@
-import { preValidateLists } from "../src/validation";
+import { preValidateLists } from "./validation";
+import messageIds from "./messageIds";
 
 export default function shedule(courseList, peopleList) {
   if (preValidateLists(courseList, peopleList)) {
@@ -48,8 +49,7 @@ function getPeopleWhichCantBeAssignedBecauseOfFullCourses(peopleList) {
     .filter(person => person._assignedCourse == undefined)
     .map(
       person =>
-        (person._unassignedReason =
-          "Person can't be assigned to one of the given priorities. Courses are full")
+        (person._unassignedReason = messageIds.UNASSIGNABLE_FULL_COURSES)
     );
 }
 
@@ -70,8 +70,7 @@ function rejectAllPeopleWithAssignedCourse(course, rejectedPeople) {
   for (let i = 0; i < course.peopleAttending.length; i++) {
     const person = course.peopleAttending[i];
     delete person._assignedCourse;
-    person._unassignedReason =
-      "Assigned course  does not fit the minimum requirements";
+    person._unassignedReason = messageIds.UNASSIGNABLE_MIN_COURSE_REQUIREMENTS;
     rejectedPeople.push(person);
   }
 }

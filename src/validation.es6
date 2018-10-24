@@ -1,3 +1,5 @@
+import messageIds from "./messageIds";
+
 export function preValidateLists(courseList, peopleList) {
   validateParams(courseList, peopleList);
   markMissingPriorities(peopleList);
@@ -12,17 +14,17 @@ export function preValidateLists(courseList, peopleList) {
 
 function validateParams(courseList, peopleList) {
   if (!Array.isArray(courseList)) {
-    throw new Error("The first param (coursList) is not a valid array");
+    throw new Error(messageIds.COURSE_LIST_NOT_VALID);
   }
   if (courseList.length == 0) {
-    throw new Error("The first param (coursList) is empty");
+    throw new Error(messageIds.EMPTY_COURSE_LIST);
   }
 
   if (!Array.isArray(peopleList)) {
-    throw new Error("The second param (peopleList) is not a valid array");
+    throw new Error(messageIds.PEOPLE_LIST_NOT_VALID);
   }
   if (peopleList.length == 0) {
-    throw new Error("The second param (peopleList) is empty");
+    throw new Error(messageIds.EMPTY_PEOPLE_LIST);
   }
 }
 
@@ -44,7 +46,7 @@ export function markUnknwonCourses(courseMap, peopleList) {
       (person.prio3 && !courseMap[person.prio3])
     ) {
       createErrorsIfAbsent(person);
-      person._errors.push("At least one of the given courses is unknown");
+      person._errors.push(messageIds.UNKNOWN_COURSE_IN_PRIORITIES);
       containsError = true;
     }
   }
@@ -57,14 +59,14 @@ export function markEmptyOrHolePriorities(peopleList) {
     const person = peopleList[i];
     if (!person.prio1 && !person.prio2 && !person.prio3) {
       createErrorsIfAbsent(person);
-      person._errors.push("There are no priorities given");
+      person._errors.push(messageIds.NO_PRIORITIES_FOUND);
     }
     if (
       (person.prio3 && (!person.prio2 || !person.prio1)) ||
       (person.prio2 && !person.prio1)
     ) {
       createErrorsIfAbsent(person);
-      person._errors.push("Skipping priorities is not allowed");
+      person._errors.push(messageIds.PRIORITY_HOLES);
       containsError = true;
     }
   }
@@ -92,7 +94,7 @@ export function markDuplicates(peopleList) {
     }
     if (numSetPrios !== Object.keys(prioMap).length) {
       createErrorsIfAbsent(person);
-      person._errors.push("There are duplicates in the priorities");
+      person._errors.push(messageIds.DUPLICATED_PRIORITIES);
       containsError = true;
     }
   }
@@ -104,7 +106,7 @@ export function markMissingPriorities(peopleList) {
     const person = peopleList[i];
     if (!person.prio1 || !person.prio2 || !person.prio3) {
       createWarningsIfAbsent(person);
-      person._warnings.push("There are not all priorities filled");
+      person._warnings.push(messageIds.UNFILLED_PRIORITIES);
     }
   }
 }

@@ -29,7 +29,6 @@ describe("courseSheduler", () => {
       peopleList
     );
 
-    console.log("-----------------------------------------------");
     console.log(1);
     console.log(assignedPeople);
     console.log(2);

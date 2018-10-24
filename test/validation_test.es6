@@ -1,4 +1,5 @@
 /* eslint-env mocha */
+import { expect } from "chai";
 
 import {
   preValidateLists,
@@ -7,7 +8,7 @@ import {
   markMissingPriorities,
   markDuplicates
 } from "../src/validation";
-import { expect } from "chai";
+import messageIds from "../src/messageIds";
 
 describe("validation", () => {
   let courses;
@@ -38,19 +39,19 @@ describe("validation", () => {
   it("should throw errors when both params are invalid", () => {
     expect(() => {
       preValidateLists();
-    }).to.throw("The first param (coursList) is not a valid array");
+    }).to.throw(messageIds.COURSE_LIST_NOT_VALID);
 
     expect(() => {
       preValidateLists([]);
-    }).to.throw("The first param (coursList) is empty");
+    }).to.throw(messageIds.EMPTY_COURSE_LIST);
 
     expect(() => {
       preValidateLists([{ name: "course 1" }]);
-    }).to.throw("The second param (peopleList) is not a valid array");
+    }).to.throw(messageIds.PEOPLE_LIST_NOT_VALID);
 
     expect(() => {
       preValidateLists([{ name: "course 1" }], []);
-    }).to.throw("The second param (peopleList) is empty");
+    }).to.throw(messageIds.EMPTY_PEOPLE_LIST);
   });
 
   it("should mark people who have unknown courses assinged", () => {
@@ -60,11 +61,11 @@ describe("validation", () => {
     expect(errorPeopleList[2]._errors).to.equal(undefined);
     expect(errorPeopleList[3]._errors).to.have.lengthOf(1);
     expect(errorPeopleList[4]._errors[0]).to.equal(
-      "At least one of the given courses is unknown"
+      messageIds.UNKNOWN_COURSE_IN_PRIORITIES
     );
     expect(errorPeopleList[3]._errors).to.have.lengthOf(1);
     expect(errorPeopleList[3]._errors[0]).to.equal(
-      "At least one of the given courses is unknown"
+      messageIds.UNKNOWN_COURSE_IN_PRIORITIES
     );
   });
 
@@ -72,15 +73,13 @@ describe("validation", () => {
     markEmptyOrHolePriorities(errorPeopleList);
     expect(errorPeopleList[0]._errors).to.have.lengthOf(1);
     expect(errorPeopleList[0]._errors[0]).to.equal(
-      "There are no priorities given"
+      messageIds.NO_PRIORITIES_FOUND
     );
 
     expect(errorPeopleList[1]._errors).to.equal(undefined);
 
     expect(errorPeopleList[2]._errors).to.have.lengthOf(1);
-    expect(errorPeopleList[2]._errors[0]).to.equal(
-      "Skipping priorities is not allowed"
-    );
+    expect(errorPeopleList[2]._errors[0]).to.equal(messageIds.PRIORITY_HOLES);
 
     expect(errorPeopleList[3]._errors).to.equal(undefined);
     expect(errorPeopleList[4]._errors).to.equal(undefined);
@@ -95,7 +94,7 @@ describe("validation", () => {
 
     expect(errorPeopleList[2]._errors).to.have.lengthOf(1);
     expect(errorPeopleList[2]._errors[0]).to.equal(
-      "There are duplicates in the priorities"
+      messageIds.DUPLICATED_PRIORITIES
     );
   });
 
@@ -103,22 +102,22 @@ describe("validation", () => {
     markMissingPriorities(errorPeopleList);
     expect(errorPeopleList[0]._warnings).to.have.lengthOf(1);
     expect(errorPeopleList[0]._warnings[0]).to.equal(
-      "There are not all priorities filled"
+      messageIds.UNFILLED_PRIORITIES
     );
 
     expect(errorPeopleList[1]._warnings).to.have.lengthOf(1);
     expect(errorPeopleList[1]._warnings[0]).to.equal(
-      "There are not all priorities filled"
+      messageIds.UNFILLED_PRIORITIES
     );
 
     expect(errorPeopleList[2]._warnings).to.have.lengthOf(1);
     expect(errorPeopleList[2]._warnings[0]).to.equal(
-      "There are not all priorities filled"
+      messageIds.UNFILLED_PRIORITIES
     );
 
     expect(errorPeopleList[3]._warnings).to.have.lengthOf(1);
     expect(errorPeopleList[3]._warnings[0]).to.equal(
-      "There are not all priorities filled"
+      messageIds.UNFILLED_PRIORITIES
     );
 
     expect(errorPeopleList[4]._warnings).to.equal(undefined);
