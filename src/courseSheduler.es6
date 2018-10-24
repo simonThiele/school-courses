@@ -3,13 +3,14 @@ import messageIds from "./messageIds";
 
 export default function shedule(courseList, peopleList) {
   if (preValidateLists(courseList, peopleList)) {
-    return;
+    return null;
   }
 
   const courseMap = getCourseListAsMap(courseList);
-  trySetCourse("prio1", courseMap, peopleList);
-  trySetCourse("prio2", courseMap, peopleList);
-  trySetCourse("prio3", courseMap, peopleList);
+  const maxPrioLength = getMaxPrioLength(peopleList);
+  for (let iP = 0; iP < maxPrioLength; iP++) {
+    trySetCourse(iP, courseMap, peopleList);
+  }
 
   const unassignedPeople = getPeopleWhichCantBeAssignedBecauseOfFullCourses(
     peopleList
@@ -26,17 +27,19 @@ export default function shedule(courseList, peopleList) {
   };
 }
 
-function trySetCourse(priority, courseMap, peopleList) {
+function trySetCourse(priorityIndex, courseMap, peopleList) {
   for (let i = 0; i < peopleList.length; i++) {
     const person = peopleList[i];
     if (person._assignedCourse) {
+      console.log("skipping", person.name);
       continue;
     }
 
-    const courseAtPriority = person[priority];
+    const courseAtPriority = (person.priorities || [])[priorityIndex];
     const course = courseMap[courseAtPriority];
     if (course) {
       if (course.peopleAttending.length < course.max) {
+        console.log("assign", person.name, course.name);
         course.peopleAttending.push(person);
         person._assignedCourse = course;
       }
@@ -47,10 +50,10 @@ function trySetCourse(priority, courseMap, peopleList) {
 function getPeopleWhichCantBeAssignedBecauseOfFullCourses(peopleList) {
   return peopleList
     .filter(person => person._assignedCourse == undefined)
-    .map(
-      person =>
-        (person._unassignedReason = messageIds.UNASSIGNABLE_FULL_COURSES)
-    );
+    .map(person => {
+      person._unassignedReason = messageIds.UNASSIGNABLE_FULL_COURSES;
+      return person;
+    });
 }
 
 function rejectAllPeopleWhereAssignedCourseDoesNotFitMinimumRequirements(
@@ -83,4 +86,10 @@ function getCourseListAsMap(courseList) {
     coursesAsMap[course.name] = course;
   }
   return coursesAsMap;
+}
+
+function getMaxPrioLength(peopleList) {
+  return peopleList
+    .map(person => (person.priorities || []).length)
+    .reduce((a, b) => (a >= b ? a : b), 0);
 }

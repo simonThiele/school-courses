@@ -4,7 +4,6 @@ import { expect } from "chai";
 import {
   preValidateLists,
   markUnknwonCourses,
-  markEmptyOrHolePriorities,
   markMissingPriorities,
   markDuplicates
 } from "../src/validation";
@@ -19,19 +18,16 @@ describe("validation", () => {
     errorPeopleList = [
       {},
       {
-        prio1: "c1"
+        priorities: ["c1"]
       },
       {
-        prio1: "c2",
-        prio3: "c2"
+        priorities: ["c2", "c2"]
       },
       {
-        prio1: "unknown c4"
+        priorities: ["unknown c4"]
       },
       {
-        prio1: "c1",
-        prio2: "unknown c5",
-        prio3: "unknown c6"
+        priorities: ["c1", "unknown c5", "unknown c6"]
       }
     ];
   });
@@ -70,17 +66,14 @@ describe("validation", () => {
   });
 
   it("should mark people who have no priorities or holes in the priority list", () => {
-    markEmptyOrHolePriorities(errorPeopleList);
+    markMissingPriorities(errorPeopleList);
     expect(errorPeopleList[0]._errors).to.have.lengthOf(1);
     expect(errorPeopleList[0]._errors[0]).to.equal(
       messageIds.NO_PRIORITIES_FOUND
     );
 
     expect(errorPeopleList[1]._errors).to.equal(undefined);
-
-    expect(errorPeopleList[2]._errors).to.have.lengthOf(1);
-    expect(errorPeopleList[2]._errors[0]).to.equal(messageIds.PRIORITY_HOLES);
-
+    expect(errorPeopleList[2]._errors).to.equal(undefined);
     expect(errorPeopleList[3]._errors).to.equal(undefined);
     expect(errorPeopleList[4]._errors).to.equal(undefined);
   });
@@ -96,30 +89,5 @@ describe("validation", () => {
     expect(errorPeopleList[2]._errors[0]).to.equal(
       messageIds.DUPLICATED_PRIORITIES
     );
-  });
-
-  it("should mark people who have not filled all priorities", () => {
-    markMissingPriorities(errorPeopleList);
-    expect(errorPeopleList[0]._warnings).to.have.lengthOf(1);
-    expect(errorPeopleList[0]._warnings[0]).to.equal(
-      messageIds.UNFILLED_PRIORITIES
-    );
-
-    expect(errorPeopleList[1]._warnings).to.have.lengthOf(1);
-    expect(errorPeopleList[1]._warnings[0]).to.equal(
-      messageIds.UNFILLED_PRIORITIES
-    );
-
-    expect(errorPeopleList[2]._warnings).to.have.lengthOf(1);
-    expect(errorPeopleList[2]._warnings[0]).to.equal(
-      messageIds.UNFILLED_PRIORITIES
-    );
-
-    expect(errorPeopleList[3]._warnings).to.have.lengthOf(1);
-    expect(errorPeopleList[3]._warnings[0]).to.equal(
-      messageIds.UNFILLED_PRIORITIES
-    );
-
-    expect(errorPeopleList[4]._warnings).to.equal(undefined);
   });
 });

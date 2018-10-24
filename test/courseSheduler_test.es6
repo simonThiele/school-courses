@@ -5,22 +5,22 @@ import { expect } from "chai";
 
 describe("courseSheduler", () => {
   const courseList = [
-    { name: "c1", min: 3, max: 7 },
-    { name: "c2", min: 5, max: 6 },
-    { name: "c3", min: 5, max: 10 },
-    { name: "c4", min: 0, max: 2 }
+    { name: "c1", min: 1, max: 2 },
+    { name: "c2", min: 1, max: 2 },
+    { name: "c3", min: 1, max: 2 },
+    { name: "c4", min: 2, max: 10 }
   ];
   const peopleList = [
-    person("p1", "c1", "c3", "c2"),
-    person("p2", "c1", "c4", "c2"),
-    person("p3", "c1", "c2", "c3"),
-    person("p4", "c1", "c2", "c3"),
-    person("p5", "c1", "c2", "c4"),
-    person("p6", "c1", "c2", "c4"),
-    person("p7", "c1", "c3", ""),
-    person("p8", "c1", "c4", ""),
-    person("p9", "c1", "c3", ""),
-    person("p10", "c1", "c3", "")
+    person("p1", ["c1", "c2", "c3"]),
+    person("p2", ["c1", "c2", "c3"]),
+    person("p3", ["c1", "c2", "c3"]),
+    person("p4", ["c1", "c2", "c3"]),
+    person("p5", ["c1", "c2", "c3"]),
+    person("p6", ["c1", "c2", "c3"]),
+    person("p7", ["c1", "c2", "c3"]),
+    person("p8", ["c1", "c3"]),
+    person("p9", ["c1", "c4"]),
+    person("p10", ["c1", "c3"])
   ];
 
   it("", () => {
@@ -29,20 +29,18 @@ describe("courseSheduler", () => {
       peopleList
     );
 
-    console.log(1);
+    console.log("Assigned");
     console.log(assignedPeople);
-    console.log(2);
+    console.log("Unassigned");
     console.log(unassignedPeople);
-    console.log(3);
+    console.log("Rejected");
     console.log(rejectedPeople);
   });
 });
 
-function person(name, prio1, prio2, prio3) {
+function person(name, priorities) {
   return {
     name,
-    prio1,
-    prio2,
-    prio3
+    priorities
   };
 }

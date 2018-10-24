@@ -2,12 +2,10 @@ import messageIds from "./messageIds";
 
 export function preValidateLists(courseList, peopleList) {
   validateParams(courseList, peopleList);
-  markMissingPriorities(peopleList);
 
   const courseMap = getCourseListAsMap(courseList);
   return (
     markUnknwonCourses(courseMap, peopleList) ||
-    markEmptyOrHolePriorities(peopleList) ||
     markMissingPriorities(peopleList)
   );
 }
@@ -40,33 +38,26 @@ export function markUnknwonCourses(courseMap, peopleList) {
   let containsError = false;
   for (let i = 0; i < peopleList.length; i++) {
     const person = peopleList[i];
-    if (
-      (person.prio1 && !courseMap[person.prio1]) ||
-      (person.prio2 && !courseMap[person.prio2]) ||
-      (person.prio3 && !courseMap[person.prio3])
-    ) {
-      createErrorsIfAbsent(person);
-      person._errors.push(messageIds.UNKNOWN_COURSE_IN_PRIORITIES);
-      containsError = true;
+    const priorities = person.priorities || [];
+    for (let iP = 0; iP < priorities.length; iP++) {
+      if (!courseMap[priorities[iP]]) {
+        createErrorsIfAbsent(person);
+        person._errors.push(messageIds.UNKNOWN_COURSE_IN_PRIORITIES);
+        containsError = true;
+        break;
+      }
     }
   }
   return containsError;
 }
 
-export function markEmptyOrHolePriorities(peopleList) {
+export function markMissingPriorities(peopleList) {
   let containsError = false;
   for (let i = 0; i < peopleList.length; i++) {
     const person = peopleList[i];
-    if (!person.prio1 && !person.prio2 && !person.prio3) {
+    if (!person.priorities || person.priorities.length === 0) {
       createErrorsIfAbsent(person);
       person._errors.push(messageIds.NO_PRIORITIES_FOUND);
-    }
-    if (
-      (person.prio3 && (!person.prio2 || !person.prio1)) ||
-      (person.prio2 && !person.prio1)
-    ) {
-      createErrorsIfAbsent(person);
-      person._errors.push(messageIds.PRIORITY_HOLES);
       containsError = true;
     }
   }
@@ -77,22 +68,16 @@ export function markDuplicates(peopleList) {
   let containsError = false;
   for (let i = 0; i < peopleList.length; i++) {
     const person = peopleList[i];
+    if (!person.priorities || person.priorities === 0) {
+      continue;
+    }
 
     let prioMap = {};
-    let numSetPrios = 0;
-    if (person.prio1) {
-      prioMap[person.prio1] = true;
-      numSetPrios++;
+    for (let iP = 0; iP < person.priorities.length; iP++) {
+      prioMap[person.priorities[iP]] = true;
     }
-    if (person.prio2) {
-      prioMap[person.prio2] = true;
-      numSetPrios++;
-    }
-    if (person.prio3) {
-      prioMap[person.prio3] = true;
-      numSetPrios++;
-    }
-    if (numSetPrios !== Object.keys(prioMap).length) {
+
+    if (person.priorities.length !== Object.keys(prioMap).length) {
       createErrorsIfAbsent(person);
       person._errors.push(messageIds.DUPLICATED_PRIORITIES);
       containsError = true;
@@ -101,24 +86,8 @@ export function markDuplicates(peopleList) {
   return containsError;
 }
 
-export function markMissingPriorities(peopleList) {
-  for (let i = 0; i < peopleList.length; i++) {
-    const person = peopleList[i];
-    if (!person.prio1 || !person.prio2 || !person.prio3) {
-      createWarningsIfAbsent(person);
-      person._warnings.push(messageIds.UNFILLED_PRIORITIES);
-    }
-  }
-}
-
 function createErrorsIfAbsent(person) {
   if (!person._errors) {
     person._errors = [];
-  }
-}
-
-function createWarningsIfAbsent(person) {
-  if (!person._warnings) {
-    person._warnings = [];
   }
 }
