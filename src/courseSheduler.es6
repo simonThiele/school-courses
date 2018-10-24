@@ -31,7 +31,6 @@ function trySetCourse(priorityIndex, courseMap, peopleList) {
   for (let i = 0; i < peopleList.length; i++) {
     const person = peopleList[i];
     if (person._assignedCourse) {
-      console.log("skipping", person.name);
       continue;
     }
 
@@ -39,7 +38,6 @@ function trySetCourse(priorityIndex, courseMap, peopleList) {
     const course = courseMap[courseAtPriority];
     if (course) {
       if (course.peopleAttending.length < course.max) {
-        console.log("assign", person.name, course.name);
         course.peopleAttending.push(person);
         person._assignedCourse = course;
       }
