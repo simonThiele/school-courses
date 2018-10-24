@@ -22,6 +22,7 @@
   "homepage": "https://github.com/simonThiele/school-courses#readme",
   "dependencies": {
     "react": "^15.5.4",
+    "react-bootstrap": "^0.32.4",
     "react-dom": "^15.5.4"
   },
   "devDependencies": {
