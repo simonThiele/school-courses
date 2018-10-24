@@ -45,7 +45,6 @@ function trySetCourse(priority, courseMap, peopleList) {
 
 function getPeopleWhichCantBeAssignedBecauseOfFullCourses(peopleList) {
   return peopleList
-    .splice()
     .filter(person => person._assignedCourse == undefined)
     .map(
       person =>
