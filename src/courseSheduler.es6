@@ -40,6 +40,7 @@ function trySetCourse(priorityIndex, courseMap, peopleList) {
       if (course.peopleAttending.length < course.max) {
         course.peopleAttending.push(person);
         person._assignedCourse = course;
+        person._assignedPrioIndex = priorityIndex;
       }
     }
   }
